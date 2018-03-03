@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title巴哈姆特公會擴充套件設定頁面</title>
+        <meta charset="utf-8">
+        <style>
+            body {
+                padding: 10px;
+                width: 600px;
+                min-width: 600px;
+            }
+        </style>
+</head>
+
+<body>
+    <h1>一般插件選項</h1>
+
+    <label for="titleNumbersOn">
+			<input type="checkbox" id="titleNumbers">
+			標題顯示通知數目
+		</label>
+
+    <br><br>
+
+    <label for="inlineCheckbox">通知數目加總計算，請選擇加總項目：<br>
+			<input type="checkbox" id="titleNumbersCheckNotice" value="notice"> 通知
+			<input type="checkbox" id="titleNumbersCheckSubscript" value="subscript"> 訂閱
+			<input type="checkbox" id="titleNumbersCheckRecommend" value="recommend"> 推薦
+		</label>
+
+    <br><br>
+
+    <label for="singleACMsgReverseOn">
+			<input type="checkbox" id="singleACMsgReverse">
+			哈拉串順序顛倒
+		</label>
+
+    <br><br>
+
+    <label for="replyDivWordCountOn">
+			<input type="checkbox" id="replyDivWordCount">
+			對話框提示剩餘字數
+
+		</label>
+
+    <br><br>
+
+    <label for="replyDivCuttingOn">
+			<input type="checkbox" id="replyDivCutting">
+			啟用長回復自動切割
+
+		</label>
+
+    <br><br>
+
+    <label for="bookMarkBtnOn">
+			<input type="checkbox" id="bookMarkBtn">
+			紀錄書籤按鈕是否顯示(已存書籤不受影響)
+		</label>
+
+    <br><br>
+
+    <label for="notifiSound">
+			<input type="checkbox" id="notifiSound">
+			桌面通知時發出聲音
+		</label>
+
+    <br><br>
+
+    <label for="uploadJsonKey">
+			JSON上傳功能啟動金鑰(請向開發者索取)
+			<input type="text" id="uploadJsonKey">
+		</label>
+
+    <script src="options.js"></script>
+
+    <br><br>
+
+    <div id="status"></div>
+    <button id="save">Save</button>
+
+    <br><br>
+    <hr>
+
+    <h1>快速回覆設定</h1>
+
+    <br>
+
+    <label for="fastResponse1">
+			快速鍵1(Ctrl+Shift+1)<br>
+			名稱：<input type="text" id="fastResponse1name"><br>
+			內容：<input type="text" id="fastResponse1">
+		</label>
+
+    <br><br>
+
+    <label for="fastResponse2">
+			快速鍵2(Ctrl+Shift+2)<br>
+			名稱：<input type="text" id="fastResponse2name"><br>
+			內容：<input type="text" id="fastResponse2">
+		</label>
+
+    <br><br>
+
+    <label for="fastResponse3">
+			快速鍵3(Ctrl+Shift+3)<br>
+			名稱：<input type="text" id="fastResponse3name"><br>
+			內容：<input type="text" id="fastResponse3">
+		</label>
+
+    <br><br>
+
+    <label for="fastResponse4">
+			快速鍵4(Ctrl+Shift+4)<br>
+			名稱：<input type="text" id="fastResponse4name"><br>
+			內容：<input type="text" id="fastResponse4">
+		</label>
+
+    <br><br>
+
+    <label for="fastResponse5">
+			快速回覆5<br>
+			名稱：<input type="text" id="fastResponse5name"><br>
+			內容：<input type="text" id="fastResponse5">
+		</label>
+
+    <br><br>
+
+    <label for="fastResponse6">
+			快速回覆6<br>
+			名稱：<input type="text" id="fastResponse6name"><br>
+			內容：<input type="text" id="fastResponse6">
+		</label>
+
+    <br><br>
+
+    <label for="fastResponse7">
+			快速回覆7<br>
+			名稱：<input type="text" id="fastResponse7name"><br>
+			內容：<input type="text" id="fastResponse7">
+		</label>
+
+    <br><br>
+
+    <label for="fastResponse8">
+			快速回覆8<br>
+			名稱：<input type="text" id="fastResponse8name"><br>
+			內容：<input type="text" id="fastResponse8">
+		</label>
+
+    <br><br>
+
+    <p>以上快速鍵組合是可以修改的<br>如果需要，請至chrome://extensions/configureCommands修改</p>
+
+    <div id="status2"></div>
+    <button id="save2">Save</button>
+
+    <script src="options.js"></script>
+</body>
+
+</html>

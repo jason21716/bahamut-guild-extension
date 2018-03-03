@@ -1,0 +1,53 @@
+事件結構表：
+    before_page_action:在判別頁面開始前執行
+            TitleDisplay(NL):修改網頁標題
+   
+    【singleACMsg】
+        common:渲染網頁時執行
+            JsonUpload(NL):新增上傳按鈕與觸發事件
+            TitleDisplay(NL):新增修改網頁標題按鈕與觸發事件
+            ReplyDisplayConfig(NL):建立右側局部顯示區塊
+            Timer(NL):建立右側計時區塊
+            fastResponse(NL):建立右鍵選單
+            wordCount(NL):建立字數計算區塊與計算機制
+            AutoRefresh(NL):自動更新版面與機制
+            BookMark(NL):建立書籤與紐與初次回覆書籤位置
+
+        before_rebuild: 重建對話框區塊前執行
+            ReverseMsg(10): 翻轉留言順序，調整對話框位置
+
+        after_rebuild: 重建完對話框區塊後執行
+
+        reGenerateReply_pre:(執行重整對串功能)觸發後馬上執行
+            ReplyDisplayConfig(10):將右側用戶清單顏色還原成初始值
+        
+        reGenerateReply_decideOutput:(執行重整對串功能)處理對串是否顯示
+            ReplyDisplayConfig(10):依右側用戶清單決定是否保留對串
+        
+        reGenerateReply_beforeRender:(執行重整對串功能)算圖之前觸發
+            ReverseMsg(10): 翻轉留言順序
+            HighSpeed(10):再算圖前依選擇將留言時間轉換
+
+        reGenerateReply_AfterRender:(執行重整對串功能)算圖之後觸發
+            BookMark(NL): 為重整對串的留言加入書籤按鈕
+
+
+        reGenerateReply_insertRender_pre:(執行插入留言功能)進入算圖函式前觸發
+            HighSpeed(NL):再算圖前依選擇將留言時間轉換
+        reGenerateReply_insertRender:(執行插入留言功能)完成算圖函式後觸發
+            BookMark(NL): 為插入的留言加入書籤按鈕
+        reGenerateReply_insertRender_post:(執行插入留言功能)完成算圖函式後觸發
+            HighSpeed(寫在singleACM內):沒有啟動時將所有串時間進行更新
+
+        reGenerateReply_post:(執行重整對串功能)觸發後執行
+            BookMark(NL): 還原書籤位置
+        
+
+        checkReplyFix_pre:(留言發送)在切割留言之前進行預處理
+            Timer(NL):透過[[tn 結束語句]]進行判定處理
+            Dice(NL):透過[[ndn+n 說明語句]]進行判定處理
+    
+    【guild】
+        common:
+            TitleDisplay(NL):新增修改網頁標題按鈕與觸發事件
+    
