@@ -12,8 +12,10 @@ main = function(item) {
     Core.config = item;
 
     //確認用戶身分
-    var selfDOM = document.getElementsByClassName('TOP-my')[0].getElementsByTagName('li')[3].childNodes[0];
-    var selfDOMMatch = selfDOM.href.match(/https\:\/\/home\.gamer\.com\.tw\/([a-z A-Z 0-9]*)/);
+    var selfDOM = $('.nav-member_imgbox img').attr('src');
+    var regular_controller = /https:\/\/avatar2\.bahamut\.com\.tw\/avataruserpic\/\w\/\w\/(\w+)/g
+    var selfDOMMatch = regular_controller.exec(selfDOM);
+    //console.log(selfDOMMatch);
     Core.config['controller'] = selfDOMMatch[1];
     console.log("使用者：" + Core.config['controller']);
 

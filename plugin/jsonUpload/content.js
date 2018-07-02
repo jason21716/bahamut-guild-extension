@@ -75,8 +75,10 @@ Core.plugin['JsonUpload'].uploadJsonFunt = function() {
     });
 }
 
-Core.pages.get('singleACMsg').events.register('common', function() {
-    if (Core.config['uploadJsonKey'] !== null && Core.config['uploadJsonKey'].length == 64) {
+/*Core.pages.get('singleACMsg').events.register('common', function() {
+    if (Core.config['uploadJsonKey'] !== undefined) {
+        if (Core.config['uploadJsonKey'].length !== 64)
+            return;
         var BH_menuE_appendDOM_uploadJson_link = document.createElement("a");
         BH_menuE_appendDOM_uploadJson_link.innerHTML = "上傳至暫存空間(活動組專用)";
         var BH_menuE_appendDOM_uploadJson = document.createElement("li");
@@ -84,4 +86,4 @@ Core.pages.get('singleACMsg').events.register('common', function() {
         document.getElementsByClassName('BH-menuE')[0].appendChild(BH_menuE_appendDOM_uploadJson);
         BH_menuE_appendDOM_uploadJson_link.addEventListener("click", Core.plugin['JsonUpload'].uploadJsonFunt);
     }
-});
+});*/

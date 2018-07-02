@@ -46,6 +46,7 @@
         checkReplyFix_pre:(留言發送)在切割留言之前進行預處理
             Timer(NL):透過[[tn 結束語句]]進行判定處理
             Dice(NL):透過[[ndn+n 說明語句]]進行判定處理
+            keepMessage(NL):儲存輸入語句，以防巴哈吃串
     
     【guild】
         common:

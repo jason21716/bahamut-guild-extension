@@ -9,6 +9,10 @@ Core.plugin['FastResponse'].panelSetting = function() {
                 Core.plugin['FastResponse'].fastResponseFunt(MsgId, Core.config[key]);
             },
             items: {
+                "recoverMessage": {
+                    "name": "還原上次輸入內容",
+                    "callback": Core.plugin['keepMessage'].loadMessage
+                },
                 "clean": {
                     "name": "清空內容",
                     "icon": function($element, key, item) { return 'context-menu-icon context-menu-icon-quit'; },
