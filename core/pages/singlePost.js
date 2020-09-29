@@ -22,6 +22,98 @@ Core.pages.register(
     },
     function() {});
 
+Core.pages.get('singlePost').subFunt['reGenerateReply'] = function(flag, replyArr, replySnIdArr) {
+
+    Core.pages.get('singlePost').events.exec('reGenerateReply_pre');
+
+    $.each(Core.config['lastReplyArr'], function(i, item) {
+        var arr = [];
+        arr[0] = true;
+        arr[1] = i;
+        arr[2] = item;
+
+        arr = Core.pages.get('singlePost').events.execArgs('reGenerateReply_decideOutput', arr);
+
+        var printFlag = arr[0];
+        i = arr[1];
+        item = arr[2];
+
+        if (printFlag) {
+            replyArr.push(item);
+            replySnIdArr.push(item.snID);
+            try {
+                document.getElementById('baha-userList-' + item.userID).style.fontWeight = 'bold';
+                document.getElementById('baha-userList-' + item.userID).style.color = 'blue';
+            } catch (e) {
+                Core.plugin['ReplyDisplayConfig'].resetUserList(Core.config['lastReplyArr']);
+                document.getElementById('baha-userList-' + item.userID).style.fontWeight = 'bold';
+                document.getElementById('baha-userList-' + item.userID).style.color = 'blue';
+            }
+
+        }
+
+
+    });
+
+
+    if (flag) {
+        var arr = [];
+        arr[0] = replyArr;
+        replyArr = Core.pages.get('singlePost').events.execArgs('reGenerateReply_beforeRender', arr)[0];
+
+        let htmlCode = commentListLayout(gsn, messageId, replyArr, 1);
+        jQuery(`#readMoreComments-${messageId}`).remove();
+        jQuery(`#allReply${messageId}`).html(htmlCode);
+
+        Core.pages.get('singlePost').events.exec('reGenerateReply_AfterRender');
+
+    } else {
+        //從這裡開始改
+        var tempAllReply = document.getElementById('allReply' + Core.config['MsgId']);
+
+        var arr = [];
+        arr[0] = replyArr;
+        replyArr = Core.pages.get('singlePost').events.execArgs('reGenerateReply_insertRender_pre', arr)[0];
+
+        for (i = 0; i < replySnIdArr.length; i++) {
+            if ($("#r-" + replySnIdArr[i]).length == 0) {
+
+                var singleReply = buildReplyFix(replyArr[i].snID, replyArr[i].userID, replyArr[i].user, replyArr[i].content, replyArr[i].time, replyArr[i].isSelf, replyArr[i].msgID, replyArr[i].replyCount, '');
+
+                var arr = [replySnIdArr[i], singleReply, tempAllReply];
+
+                if (Core.config['singleACMsgReverse']) {
+                    tempAllReply.insertBefore(htmlToElement(singleReply), tempAllReply.firstChild);
+                } else {
+                    tempAllReply.appendChild(htmlToElement(singleReply));
+                }
+
+                Core.pages.get('singlePost').events.execArgs('reGenerateReply_insertRender', arr);
+
+                Util.ChangeText("r-" + replySnIdArr[i], Util.ChangeText.FLAG_BALA);
+            }
+        }
+
+        var replyMsgHistoryArr = document.getElementsByClassName('msgreport');
+        for (i = 0; i < replyMsgHistoryArr.length; i++) {
+            var checkingReplyId = replyMsgHistoryArr[i].id.substr(2);
+            var replyIndex = replySnIdArr.indexOf(checkingReplyId)
+            if (replyIndex == -1) {
+                document.getElementById('allReply' + Core.config['MsgId']).removeChild(document.getElementById('r-' + checkingReplyId));
+            } else if (!Core.plugin['HighSpeed'].flag) {
+                var targetObj = replyArr[replyIndex];
+                var tempTime = targetObj.time;
+                var tempCount = targetObj.replyCount;
+                $('#r-' + checkingReplyId + ' .ST1:eq(0)').html(tempTime);
+                $('#r-' + checkingReplyId + ' .ST1:eq(1)').html('#' + tempCount);
+            }
+        }
+
+    }
+    Core.pages.get('singlePost').events.exec('reGenerateReply_post');
+
+}
+
 Core.pages.get('singlePost').subFunt['generateReplyObjArr'] = function(gsn, messageId) {
     jQuery.ajax({
         url: globalConfig.apiRoot + '/v1/comment_list_legacy.php',
@@ -37,8 +129,6 @@ Core.pages.get('singlePost').subFunt['generateReplyObjArr'] = function(gsn, mess
         Core.config['lastReplyArr'] = result.data.comments
     })
 }
-
-//v1/comment_list_legacy.php?gsn=4158&messageId=13025565
 
 Core.pages.get('singlePost').subFunt['commentNewFix'] = function(gsn, messageId) {
     let text = jQuery('#replyMsg' + messageId);
@@ -65,12 +155,19 @@ Core.pages.get('singlePost').subFunt['commentNewFix'] = function(gsn, messageId)
 
     msg_arr = Core.pages.get('singlePost').events.execArgs('cuttingReply', msg_arr);
 
+    text.val('');
+
     Core.pages.get('singlePost').subFunt['UploadReplyRecursive'](gsn, messageId, msg_arr, 0)
 }
 
 Core.pages.get('singlePost').subFunt['UploadReplyRecursive'] = function(gsn, messageId, msgarr, index) {
-    if (msgarr.length == index)
+    console.log(msgarr)
+
+    if (msgarr.length == index) {
+        Core.pages.get('singlePost').subFunt['generateReplyObjArr'](gsn, messageId)
         return;
+    }
+
 
     let csrf = new Bahamut.Csrf();
     csrf.setCookie();
@@ -97,7 +194,7 @@ Core.pages.get('singlePost').subFunt['UploadReplyRecursive'] = function(gsn, mes
             return;
         }
 
-        text.val('');
+
         let commentData = {
             id: result.data.commentId,
             time: result.data.time,

@@ -29,6 +29,15 @@ function commentNewUpdateLayout(gsn, messageId, comment) {
     div.append(commentLayout(gsn, messageId, comment, num));
 }
 
+function commentListLayout(gsn, messageId, comments, page) {
+    let htmlCode = '';
+    let commentNum = (page - 1) * 15 + 1;
+    comments.forEach(comment => {
+        htmlCode += commentLayout(gsn, messageId, comment, commentNum++);
+    });
+    return htmlCode;
+}
+
 function commentLayout(gsn, postId, comment, num) {
     let htmlcode = '<div id="r-' + comment.id + '" name="r-' + comment.id + '" class="msgreport BC2">';
 
