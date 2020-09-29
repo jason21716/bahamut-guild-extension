@@ -37,6 +37,7 @@ main = function(item) {
     } else {
         console.log("頁面主函式沒有觸發");
     }
+    console.log(Core)
 };
 
 chrome.storage.local.get(null, main);

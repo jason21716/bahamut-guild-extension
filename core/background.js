@@ -2,8 +2,9 @@
  * @file 核心的background事件，用以確認插件按鈕是否該啟用
  * @author YUNG-HUNG TSAI
  * @license GPL-3.0
- * 
- * 確認該分頁網址是否為公會區網站，是則顯示插件按鈕
+ */
+
+/** 確認該分頁網址是否為公會區網站，是則顯示插件按鈕
  * 
  * @param {*} tabId 
  * @param {*} changeInfo 

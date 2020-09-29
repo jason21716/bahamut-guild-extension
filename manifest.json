@@ -3,7 +3,7 @@
 
     "name": "巴哈姆特公會擴充套件",
     "description": "增進巴哈姆特公會對串體驗",
-    "version": "1.0.2.0",
+    "version": "1.0.2.1",
     "icons": {
         "19": "icon/baha19.png",
         "38": "icon/baha38.png",
@@ -30,36 +30,28 @@
     },
 
     "content_scripts": [{
-        "run_at": "document_end",
+        "run_at": "document_idle",
         "matches": ["http://guild.gamer.com.tw/*", "https://guild.gamer.com.tw/*"],
         "css": [
             "lib/contextmenu/jquery.contextMenu.css"
         ],
         "js": [
             "lib/jquery-2.0.0.min.js", "lib/date.format.js", "lib/contextmenu/jquery.ui.position.js", "lib/contextmenu/jquery.contextMenu.js",
+            "lib/Cookies.js",
+            "lib/Csrf.js",
 
+            "core/globalConfig.js",
             "core/utility.js",
+
             "core/class/plugin/EventStore.js",
             "core/class/Page.js",
             "core/class/Core.js",
 
             "core/pages/guild.js",
-            "core/pages/singleACMsg_rewriteFunt.js",
-            "core/pages/singleACMsg.js",
+            "core/pages/singlePost_rewriteFunt.js",
+            "core/pages/singlePost.js",
 
-            "plugin/titleDisplay/content.js",
-            "plugin/jsonUpload/content.js",
-            "plugin/replyDisplayConfig/content.js",
-            "plugin/timer/content.js",
-            "plugin/reverseMsg/content.js",
-            "plugin/cuttingMsg/content.js",
-            "plugin/fastResponse/content.js",
-            "plugin/wordCount/content.js",
-            "plugin/autoRefresh/content.js",
-            "plugin/dice/content.js",
-            "plugin/bookmark/content.js",
-            "plugin/highSpeed/content.js",
-            "plugin/keepMessage/content.js",
+
 
             "core/content_script.js"
         ]

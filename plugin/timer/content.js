@@ -1,51 +1,52 @@
-Core.plugin['Timer'] = {};
+Core.plugin['Dice'] = {};
 
-Core.plugin['Timer'].addRightTimer = function() {
-    var domRightTitle = document.createElement("h5");
-    domRightTitle.innerHTML = '計時器';
-    domRightTitle.id = 'baha-rightTimerTitle';
+Core.plugin['Dice'].filterRollDice = function(match, var_count, var_size, var_symbol, var_addnum, var_reason, offset, string) {
+    var addnumber = (!isNaN(parseInt(var_addnum))) ? parseInt(var_addnum) : 0;
+    addnumber *= (var_symbol === '-') ? -1 : 1;
 
-    var domRightContent = document.createElement("div");
-    domRightContent.className = 'BH-rbox MSG-list5';
-    domRightContent.id = 'baha-rightTimerContent';
-
-    var rightContentHeader = document.createElement("p");
-    rightContentHeader.innerHTML = '計時器預備中...';
-    rightContentHeader.id = 'baha-rightTimerTimeStr';
-
-    var rightContentHeader2 = document.createElement("p");
-    rightContentHeader2.innerHTML = '';
-    rightContentHeader2.id = 'baha-rightTimerTimeStr2';
-
-    var domRightContentBtnDiv = document.createElement("div");
-    domRightContentBtnDiv.className = 'BH-slave_more';
-
-    var rightContentBtnStart = document.createElement("button");
-    rightContentBtnStart.innerHTML = '開始';
-    rightContentBtnStart.id = 'baha-rightTimerTimeBtnStart';
-
-    var rightContentBtnStop = document.createElement("button");
-    rightContentBtnStop.innerHTML = '停止';
-    rightContentBtnStop.disabled = true;
-    rightContentBtnStop.id = 'baha-rightTimerTimeBtnStop';
-
-    BAHA_TIMER_COUNTI = new Date().getTime();
-    BAHA_TIMER_ID = 0;
-    rightContentBtnStart.addEventListener("click", function(e) {
-        Core.plugin['Timer'].timerControl('start', -1, '');
+    var dice = {
+        user: Core.config['controller'],
+        nickname: Core.config['controller'],
+        reason: (var_reason.length > 0) ? var_reason : '',
+        channel: "Baha_extansion",
+        size: (!isNaN(parseInt(var_size))) ? parseInt(var_size) : 1,
+        addnumber: addnumber,
+        count: (!isNaN(parseInt(var_count))) ? parseInt(var_count) : 1,
+        ispool: false,
+        isrepeat: true,
+        pool: ['']
+    }
+    $.ajax({
+        type: "POST",
+        url: "https://www.isaka.idv.tw/dice-api/dice",
+        dataType: 'json',
+        data: dice,
+        success: function(bb) {
+            var req = bb.requestData;
+            var res = bb.result;
+            var str = req.nickname + '(' + req.user + ')的「' + req.reason + '」擲了「' + req.count + ' d ' + req.size + ' ' + ((req.addnumber >= 0) ? ('+ ') : ('')) + req.addnumber + '」 ，擲出「';
+            res.record.forEach(function(v, i) {
+                str += v;
+                if (i < res.record.length - 1)
+                    str += '、';
+            })
+            str += '」，總合為「' + res.total + '」。 (' + new Date().toLocaleString() + ' #' + res.hashcode + ')。';
+            document.getElementById('replyMsg' + Core.config['MsgId']).value = str;
+            Core.pages.get('singleACMsg').subFunt['cuttingReply'](Core.config['MsgId'], '#GID' + Core.config['guildId'])
+        }
     });
+    return '';
+}
 
-    rightContentBtnStop.addEventListener("click", function(e) {
-        Core.plugin['Timer'].timerControl('stop', -1, '');
-    });
-
-    domRightContent.appendChild(rightContentHeader);
-    domRightContent.appendChild(rightContentHeader2);
-    domRightContentBtnDiv.appendChild(rightContentBtnStart);
-    domRightContentBtnDiv.appendChild(rightContentBtnStop);
-    domRightContent.appendChild(domRightContentBtnDiv);
-    $(document.getElementById('BH-slave')).prepend(domRightContent);
-    $(document.getElementById('BH-slave')).prepend(domRightTitle);
+Core.pages.get('singleACMsg').events.register('cuttingReply_pre', function(str) {
+    str_after = str.replace(/\[\[\s*(\d*)\s*d\s*(\d*)\s*([+-]*)\s*(\d*)\s*\(*([^\)]*)\)*\s*\]\]/i, Core.plugin['Dice'].filterRollDice);
+    return (str_after !== str) ? ["[[[cuttingReply_pre_stop]]]"] : [str];
+});
+domRightContentBtnDiv.appendChild(rightContentBtnStart);
+domRightContentBtnDiv.appendChild(rightContentBtnStop);
+domRightContent.appendChild(domRightContentBtnDiv);
+$(document.getElementById('BH-slave')).prepend(domRightContent);
+$(document.getElementById('BH-slave')).prepend(domRightTitle);
 }
 
 Core.plugin['Timer'].timerControl = function(str, limitTime, responseText) {
@@ -71,7 +72,7 @@ Core.plugin['Timer'].timerControl = function(str, limitTime, responseText) {
                 if (BAHA_TIMER_LIMIT_TIME != -1 && elapsed > BAHA_TIMER_LIMIT_TIME) {
                     Core.plugin['Timer'].timerControl('stop');
                     document.getElementById('replyMsg' + Core.config['MsgId']).value = BAHA_TIMER_TEXT;
-                    Core.pages.get('singleACMsg').subFunt['checkReplyFix'](Core.config['MsgId'], '#GID' + Core.config['guildId'])
+                    Core.pages.get('singleACMsg').subFunt['cuttingReply'](Core.config['MsgId'], '#GID' + Core.config['guildId'])
                 } else {
                     if (Math.round(elapsed) == elapsed) {
                         elapsed += '.0';
@@ -94,7 +95,7 @@ Core.plugin['Timer'].timerControl = function(str, limitTime, responseText) {
 
 Core.pages.get('singleACMsg').events.register('common', Core.plugin['Timer'].addRightTimer);
 
-Core.pages.get('singleACMsg').events.register('checkReplyFix_pre', function(str) {
+Core.pages.get('singleACMsg').events.register('cuttingReply_pre', function(str) {
     str = str.replace(/\[\[\s*t\s*(\d*)\s*([^\]]*)\s*\]\]/i, function(match, var_time, var_reason, offset, string) {
         Core.plugin['Timer'].timerControl('start', var_time, var_reason);
         return '(' + var_time + '秒判定)';

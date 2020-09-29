@@ -1,3 +1,12 @@
+String.prototype.utf8Length = function() {
+    var e = this.match(/[^\x00-\xff]/gi);
+    return null === e ? this.length : this.length + 2 * e.length
+}
+
+function isIE() {
+    return "Microsoft Internet Explorer" == navigator.appName
+}
+
 function getDomainFromUrl(url) {
     var host = null;
 
@@ -47,4 +56,11 @@ function htmlToElement(html) {
     var template = document.createElement('template');
     template.innerHTML = html;
     return template.content.firstChild;
+}
+
+function getCookie(e) {
+    e = "; " + e + "=";
+    var t = "; " + document.cookie;
+    return start = t.indexOf(e, 0), -1 == start ? "" : (end = t.indexOf(";", start + 1), -1 == end && (end = t.length),
+        isIE() ? unescape(t.substring(start + e.length, end)) : t.substring(start + e.length, end))
 }
