@@ -12,11 +12,9 @@ main = function(item) {
     Core.config = item;
 
     //確認用戶身分
-    var selfDOM = $('.nav-member_imgbox img').attr('src');
-    var regular_controller = /https:\/\/avatar2\.bahamut\.com\.tw\/avataruserpic\/\w\/\w\/(\w+)/g
-    var selfDOMMatch = regular_controller.exec(selfDOM);
+    var user = Cookies.get('BAHAID');
     //console.log(selfDOMMatch);
-    Core.config['controller'] = selfDOMMatch[1];
+    Core.config['controller'] = user;
     console.log("使用者：" + Core.config['controller']);
 
     //網址解析

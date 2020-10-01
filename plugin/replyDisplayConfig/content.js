@@ -148,15 +148,6 @@ Core.plugin['ReplyDisplayConfig'].addRightContent = function() {
 Core.pages.get('singlePost').events.register('common', Core.plugin['ReplyDisplayConfig'].addRightContent);
 
 Core.pages.get('singlePost').events.register('reGenerateReply_pre', function() {
-    if (Core.config['bookmark-' + Core.config['MsgId']] !== undefined && Core.config['displaySetting'].onlyAfterBookMrak != 0) {
-        for (var i = 0; i < Core.config['lastReplyArr'].length; i++) {
-            if (('r-' + Core.config['lastReplyArr'][i].snID) === Core.config['bookmark-' + Core.config['MsgId']]) {
-                Core.plugin['ReplyDisplayConfig'].bookMarkLocation = i;
-                break;
-            }
-        }
-    }
-
     var domUserList = document.getElementsByClassName('baha-userlist-Label');
     $.each(domUserList, function(i, item) {
         item.style.fontWeight = 'regular';

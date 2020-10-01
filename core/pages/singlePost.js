@@ -17,8 +17,8 @@ Core.pages.register(
 
         reGenerateReply_post: 'reGenerateReply_post',
 
-        checkReplyFix_pre: 'cuttingReply_pre',
-        checkReplyFix: 'cuttingReply'
+        cuttingReply_pre: 'cuttingReply_pre',
+        cuttingReply: 'cuttingReply'
     },
     function() {});
 
@@ -79,8 +79,8 @@ Core.pages.get('singlePost').subFunt['reGenerateReply'] = function(flag, replyAr
         for (i = 0; i < replySnIdArr.length; i++) {
             if ($("#r-" + replySnIdArr[i]).length == 0) {
 
-                var singleReply = buildReplyFix(replyArr[i].snID, replyArr[i].userID, replyArr[i].user, replyArr[i].content, replyArr[i].time, replyArr[i].isSelf, replyArr[i].msgID, replyArr[i].replyCount, '');
-                var singleReply = commentLayout(Core.config['MsgId'], replyArr[i].id, replyArr[i].text, i) 
+                //var singleReply = buildReplyFix(replyArr[i].snID, replyArr[i].userID, replyArr[i].user, replyArr[i].content, replyArr[i].time, replyArr[i].isSelf, replyArr[i].msgID, replyArr[i].replyCount, '');
+                var singleReply = commentLayout(Core.config['guildId'], Core.config['MsgId'], replyArr[i], replyArr[i].replyNum) 
                 var arr = [replySnIdArr[i], singleReply, tempAllReply];
 
                 if (Core.config['singlePostReverse']) {
@@ -102,7 +102,7 @@ Core.pages.get('singlePost').subFunt['reGenerateReply'] = function(flag, replyAr
             } else if (!Core.plugin['HighSpeed'].flag) {
                 var targetObj = replyArr[replyIndex];
                 var tempTime = targetObj.time;
-                var tempCount = targetObj.replyCount;
+                var tempCount = targetObj.replyNum;
                 $('#r-' + checkingReplyId + ' .ST1:eq(0)').html(tempTime);
                 $('#r-' + checkingReplyId + ' .ST1:eq(1)').html('#' + tempCount);
             }
@@ -125,7 +125,12 @@ Core.pages.get('singlePost').subFunt['generateReplyObjArr'] = function(gsn, mess
             withCredentials: true
         }
    })
-   .done((res)=>{Core.config['lastReplyArr'] = res.data.comments})
+   .done((res)=>{
+        res.data.comments.forEach((element,idx)=>{
+            element['replyNum'] = idx + 1;
+        });
+        Core.config['lastReplyArr'] = res.data.comments
+    })
 }
 
 Core.pages.get('singlePost').subFunt['commentNewFix'] = function(gsn, messageId) {
@@ -136,6 +141,14 @@ Core.pages.get('singlePost').subFunt['commentNewFix'] = function(gsn, messageId)
         alert('留言不能空白!');
         return;
     }
+    if( ! Core.config['replyDivCutting']){
+        var limit = Core.config['cuttMsgLimit']
+        var msgDiv = document.getElementById('replyMsg' + messageId)
+        if(countLimit(msgDiv, limit)){
+            return;
+        }
+    }
+    
 
     if (btn.prop('disabled')) {
         alert('處理中請稍候!');
@@ -221,7 +234,6 @@ Core.pages.get('singlePost').subFunt['enterkeyFix'] = function(e, obj, type, sn,
         if (e.preventDefault) e.preventDefault();
         else e.returnValue = false;
     } else {
-        countLimit(obj, limit);
         if (obj.clientHeight < obj.scrollHeight) {
             obj.style.height = obj.scrollHeight + 'px';
         }
@@ -273,20 +285,22 @@ Core.pages.get('singlePost').mainEvent = function() {
     
         resolve();
     }).then((resolve, reject) => {
+        return $.ajax({
+            url: globalConfig.apiRoot + '/v1/post_detail.php',
+            method: 'GET',
+            data: {
+                gsn: Core.config['guildId'],
+                messageId: Core.config['MsgId'],
+            },
+            xhrFields: {
+                withCredentials: true
+            }
+       })
+    }).then((resolve, reject) => {
         //確認是否為該串擁有者
-        var msgrightDOM = document.getElementsByClassName('msgright')[0];
-        var msgControllerDOM = msgrightDOM.getElementsByTagName('a')[0];
-        var isOwner;
-        if (msgControllerDOM.textContent == '刪除') {
-            isOwner = true;
-            Core.config['isOwner'] = isOwner;
-        } else {
-            var msgControllerDOMMatch = msgControllerDOM.href.match(/https\:\/\/home\.gamer\.com\.tw\/home\.php\?owner\=([a-z A-Z 0-9]*)/);
-            var msgController = msgControllerDOMMatch[1];
-            isOwner = false;
-        }
+        Core.config['msgCreater'] = resolve.data.publisher.id;
+        var isOwner = (Core.config['msgCreater'] == Core.config['controller']);
         Core.config['isOwner'] = isOwner;
-        Core.config['controller'] = msgController;
         return Promise.resolve();
     }).then((resolve, reject) => {
         return $.ajax({
@@ -301,6 +315,9 @@ Core.pages.get('singlePost').mainEvent = function() {
             }
        })
     }).then((resolve, reject) => {
+        resolve.data.comments.forEach((element,idx)=>{
+            element['replyNum'] = idx
+        });
         Core.config['lastReplyArr'] = resolve.data.comments
         return Promise.resolve();
     }).then((resolve, reject) => {

@@ -13,7 +13,8 @@ Core.plugin['WordCount'].panelSet = function() {
             document.getElementById('replyDiv' + MsgId).appendChild(wordCountDOM);
         $("#replyDiv" + MsgId).delegate('#replyMsg' + MsgId, "input", function() {
             var msgBox = document.getElementById('replyMsg' + Core.config['MsgId']);
-            if (countLimitFix(msgBox, 85) < 0) {
+            var currentWord = Math.round(utf8LengthFix(msgBox.value) / 3)
+            if ( currentWord > Core.config['cuttMsgLimit']) {
                 if (Core.config['replyDivCutting'] === false) {
                     msgBox.style.borderColor = 'red';
                     msgBox.style.borderWidths = '2pt';
@@ -29,11 +30,11 @@ Core.plugin['WordCount'].panelSet = function() {
                 msgBox.style.borderColor = '';
                 msgBox.style.borderWidths = '';
                 msgBox.style.backgroundColor = '';
-                var leftWord = Math.round((255 - countLimitFix(msgBox, 85)) / 3);
+                var leftWord = Core.config['cuttMsgLimit'] - currentWord;
                 document.getElementById('bahaext-wordCount').innerHTML = '  剩餘' + leftWord + '字元';
             }
         });
     }
 }
 
-Core.pages.get('singleACMsg').events.register('common', Core.plugin['WordCount'].panelSet);
+Core.pages.get('singlePost').events.register('common', Core.plugin['WordCount'].panelSet);

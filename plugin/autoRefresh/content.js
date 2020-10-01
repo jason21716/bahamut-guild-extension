@@ -62,7 +62,7 @@ Core.plugin['AutoRefresh'].panelset = function() {
     document.getElementById('baha-autoRefreshDiv').appendChild(autoRefreshBtn2Dom);
     document.getElementById('baha-autoRefreshBtn').addEventListener('click', Core.plugin['AutoRefresh'].setAutoRefresh);
     document.getElementById('baha-manuelRefreshBtn').addEventListener('click', function() {
-        Core.pages.get('singleACMsg').subFunt['reGenerateReply'](true, new Array(), new Array());
+        Core.pages.get('singlePost').subFunt['reGenerateReply'](true, new Array(), new Array());
     });
 }
 
@@ -103,61 +103,45 @@ Core.plugin['AutoRefresh'].autoRefreshFunt = function() {
     var guildId = Core.config['guildId'];
 
     $.ajax({
-        type: "GET",
-        url: "https://guild.gamer.com.tw/singleACMsg.php",
-        data: { sn: msgId, gsn: guildId },
-        success: function(b) {
-
-            var replySnIdArr = new Array();
-            var replyArr = new Array();
-            var replyObjArr = new Array();
-            var replyArrTemp = b.match(/buildReply\([0-9]+\,\'[^\']+\'\,\'[^\']+\'\,\'[^\']+\'\,\'[^\']+\'\,[^\,]+\,[0-9]+\,[0-9]+\,\'[^\']*\'\)\;/g);
-
-            var stopFlag = false;
-            var lastResponseUserId;
-            $.each(replyArrTemp, function(i, item) {
-                var replyObj = new Array();
-                var temp = item.match(/buildReply\(([0-9]+)\,\'([^\']+)\'\,\'([^\']+)\'\,\'([^\']+)\'\,\'([^\']+)\'\,([^\,]+)\,([0-9]+)\,([0-9]+)\,\'[^\']*\'\)\;/);
-                replyObj.snID = temp[1];
-                replyObj.userID = temp[2];
-                replyObj.user = temp[3];
-                replyObj.content = temp[4];
-                replyObj.time = temp[5];
-                replyObj.isSelf = temp[6];
-                replyObj.msgID = temp[7];
-                replyObj.replyCount = temp[8];
-                replyObj.content = replyObj.content.replace(/\&ensp/g, ' ');
-                replyObj.content = replyObj.content.replace(/\&emsp/g, '　');
-
-                replyObjArr.push(replyObj);
-                lastResponseUserId = replyObj.userID;
-            });
-            Core.config['lastReplyArr'] = replyObjArr;
-            Core.pages.get('singleACMsg').subFunt['reGenerateReply'](false, replyArr, replySnIdArr);
-
-            if (document.getElementById('baha-autoRefreshCheck').checked) {
-                var last_check = 0;
-                last_check = document.getElementById('allReply' + Core.config['MsgId']).childElementCount;
-                if (MSGRE_MAX < last_check && lastResponseUserId != Core.config['controller']) {
-                    var text = (Core.config['NEW_TITLE'] != Core.config['ORGINAL_TITLE']) ?
-                        '分頁：' + Core.config['NEW_TITLE'] :
-                        document.getElementsByClassName('msgright')[0].textContent.substr(0, 20);
-                    var number = last_check
-                    chrome.runtime.sendMessage({
-                        greeting: "nofity",
-                        rid: Core.config['MsgId'] + last_check,
-                        text: text,
-                        num: number,
-                        sound: Core.config['notifiSound']
-                    })
-                    MSGRE_MAX = last_check;
-                }
-                document.getElementById('baha-autoRefreshStr').innerHTML = '啟用自動更新中...(通知已啟動)';
-            } else {
-                document.getElementById('baha-autoRefreshStr').innerHTML = '啟用自動更新中...';
-            }
+        url: globalConfig.apiRoot + '/v1/comment_list_legacy.php',
+        method: 'GET',
+        data: {
+            gsn: Core.config['guildId'],
+            messageId: Core.config['MsgId'],
+        },
+        xhrFields: {
+            withCredentials: true
         }
+    }).then((resolve, reject) => {
+        resolve.data.comments.forEach((element,idx)=>{
+            element['replyNum'] = idx + 1;
+        });
+        Core.config['lastReplyArr'] = resolve.data.comments
+        Core.pages.get('singlePost').subFunt['reGenerateReply'](false, [], []);
+
+        if (document.getElementById('baha-autoRefreshCheck').checked) {
+            var last_check = 0;
+            last_check = document.getElementById('allReply' + Core.config['MsgId']).childElementCount;
+            if (MSGRE_MAX < last_check && lastResponseUserId != Core.config['controller']) {
+                var text = (Core.config['NEW_TITLE'] != Core.config['ORGINAL_TITLE']) ?
+                    '分頁：' + Core.config['NEW_TITLE'] :
+                    document.getElementsByClassName('msgright')[0].textContent.substr(0, 20);
+                var number = last_check
+                chrome.runtime.sendMessage({
+                    greeting: "nofity",
+                    rid: Core.config['MsgId'] + last_check,
+                    text: text,
+                    num: number,
+                    sound: Core.config['notifiSound']
+                })
+                MSGRE_MAX = last_check;
+            }
+            document.getElementById('baha-autoRefreshStr').innerHTML = '啟用自動更新中...(通知已啟動)';
+        } else {
+            document.getElementById('baha-autoRefreshStr').innerHTML = '啟用自動更新中...';
+        }
+        return Promise.resolve();
     })
 }
 
-Core.pages.get('singleACMsg').events.register('common', Core.plugin['AutoRefresh'].panelset);
+Core.pages.get('singlePost').events.register('common', Core.plugin['AutoRefresh'].panelset);

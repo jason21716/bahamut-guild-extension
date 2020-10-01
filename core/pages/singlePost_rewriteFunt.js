@@ -17,13 +17,38 @@ function countLimit(txt, limit) {
     return false;
 }
 
-function commentListLayout(gsn, messageId, comments, page) {
+function commentListLayout(gsn, messageId, comments, page, reverse = false) {
     let htmlCode = '';
-    let commentNum = (page - 1) * 15 + 1;
+    let commentNum = -1;
+    commentNum = (page - 1) * 15 + 1;
     comments.forEach(comment => {
-        htmlCode += commentLayout(gsn, messageId, comment, commentNum++);
+        htmlCode += commentLayout(gsn, messageId, comment, comment.replyNum);
     });
     return htmlCode;
+}
+
+function htmlDecode(text) {
+    var map = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&#039;': "'"
+    };
+
+    return text.replace(/&(?:amp|lt|gt|quot|#0?39);/g, function(m) { return map[m]; });
+}
+
+function htmlEncode(text) {
+    let map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
 function commentLayout(gsn, postId, comment, num) {

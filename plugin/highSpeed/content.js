@@ -10,13 +10,13 @@ Core.plugin['HighSpeed'].changeTime = function(str) {
         calender.setDate(calender.getDate() - 2);
         str = str.replace("前天", calender.format("yyyy-mm-dd"));
     } else if (str.indexOf("分前") !== -1) {
-        var matchs = str.match(/([0-9]+)分前/);
+        var matchs = str.match(/([0-9]+)\W?分前/);
         calender.setMinutes(calender.getMinutes() - matchs[1]);
         str = calender.format("yyyy-mm-dd HH:MM");
     } else if (str.indexOf("1分內") !== -1) {
         str = calender.format("yyyy-mm-dd HH:MM");
     } else if (str.indexOf("小時前") !== -1) {
-        var matchs = str.match(/([0-9]+)小時前/);
+        var matchs = str.match(/([0-9]+)\W?小時前/);
         calender.setHours(calender.getHours() - matchs[1]);
         str = calender.format("yyyy-mm-dd HH:MM");
     } else {
@@ -30,7 +30,7 @@ Core.plugin['HighSpeed'].changeTime = function(str) {
     return str;
 
 }
-Core.pages.get('singleACMsg').events.register('reGenerateReply_pre', function(replyArr) {
+Core.pages.get('singlePost').events.register('reGenerateReply_pre', function(replyArr) {
     Core.plugin['HighSpeed'].flag = document.getElementById('baha-autoRefreshHiSpeedCheck').checked;
 });
 
@@ -46,6 +46,6 @@ Core.plugin['HighSpeed'].arrayChangeTime = function(replyArr) {
 
 
 
-Core.pages.get('singleACMsg').events.register('reGenerateReply_beforeRender', Core.plugin['HighSpeed'].arrayChangeTime, 10);
+Core.pages.get('singlePost').events.register('reGenerateReply_beforeRender', Core.plugin['HighSpeed'].arrayChangeTime, 10);
 
-Core.pages.get('singleACMsg').events.register('reGenerateReply_insertRender_pre', Core.plugin['HighSpeed'].arrayChangeTime, 10);
+Core.pages.get('singlePost').events.register('reGenerateReply_insertRender_pre', Core.plugin['HighSpeed'].arrayChangeTime, 10);

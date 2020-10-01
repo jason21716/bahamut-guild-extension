@@ -20,9 +20,12 @@
 
         reGenerateReply_pre:(執行重整對串功能)觸發後馬上執行
             ReplyDisplayConfig(10):將右側用戶清單顏色還原成初始值
+            BookMark(10):計算書籤位置
         
         reGenerateReply_decideOutput:(執行重整對串功能)處理對串是否顯示
+            BookMark(5):確認是否在書籤後面而不顯示
             ReplyDisplayConfig(10):依右側用戶清單決定是否保留對串
+            
         
         reGenerateReply_beforeRender:(執行重整對串功能)算圖之前觸發
             ReverseMsg(10): 翻轉留言順序
@@ -54,8 +57,3 @@
             TitleDisplay(NL):新增修改網頁標題按鈕與觸發事件
     
 
-"plugin/wordCount/content.js",
-"plugin/autoRefresh/content.js",
-"plugin/dice/content.js",
-"plugin/bookmark/content.js",
-"plugin/highSpeed/content.js",

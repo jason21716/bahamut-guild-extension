@@ -58,6 +58,11 @@
             "plugin/cuttingMsg/content.js",
             "plugin/keepMessage/content.js",
             "plugin/fastResponse/content.js",
+            "plugin/wordCount/content.js",
+            "plugin/dice/content.js",
+            "plugin/bookmark/content.js",
+            "plugin/highSpeed/content.js",
+            "plugin/autoRefresh/content.js",
 
             "core/content_script.js"
         ]

@@ -1,5 +1,7 @@
 Core.plugin['Bookmark'] = {};
 
+Core.plugin['Bookmark'].bookMarkLocation = -1;
+
 Core.plugin['Bookmark'].setBookMarkBtn = function(MsgReid) {
     var newItem = document.createElement("div");
     newItem.id = 'baha-bookMark-' + MsgReid;
@@ -36,7 +38,10 @@ Core.plugin['Bookmark'].panelSet = function() {
         document.body.appendChild(sheet);
 
         $('#allReply' + Core.config['MsgId']).delegate('.baha-boonMarkBtn', 'click', function(event) {
-            var chromeBookMarkNameStr = '{"bookmarkName-' + event.target.getAttribute('Msgid') + '":"' + document.getElementsByClassName('msgright')[0].textContent.substr(0, 30) + '"}';
+            var bookmarkName = $('div.msgright:first').contents().filter(function() {
+                return this.nodeType == 3;
+            }).text().substr(1, 30);
+            var chromeBookMarkNameStr = '{"bookmarkName-' + event.target.getAttribute('Msgid') + '":"' + bookmarkName + '"}';
             var chromeBookMarkStr = '{"bookmark-' + event.target.getAttribute('Msgid') + '":"' + event.target.getAttribute('replyid') + '"}';
             var chromeBookMarkArr = JSON.parse(chromeBookMarkStr);
             var chromeBookMarkNameArr = JSON.parse(chromeBookMarkNameStr);
@@ -73,21 +78,43 @@ Core.plugin['Bookmark'].bookMarkChangeColor = function(snid) {
     document.getElementById(snid).style.backgroundColor = '#D0B7C5';
 }
 
-Core.pages.get('singleACMsg').events.register('common', Core.plugin['Bookmark'].panelSet);
+Core.pages.get('singlePost').events.register('common', Core.plugin['Bookmark'].panelSet);
 
-Core.pages.get('singleACMsg').events.register('reGenerateReply_insertRender', function(replyId, singleReply, tempAllReply) {
+Core.pages.get('singlePost').events.register('reGenerateReply_pre', function() {
+    if (Core.config['bookmark-' + Core.config['MsgId']] !== undefined && Core.config['displaySetting'].onlyAfterBookMrak != 0) {
+        for (var i = 0; i < Core.config['lastReplyArr'].length; i++) {
+            if (('r-' + Core.config['lastReplyArr'][i].id) === Core.config['bookmark-' + Core.config['MsgId']]) {
+                Core.plugin['Bookmark'].bookMarkLocation = i;
+                break;
+            }
+        }
+    }
+})
+
+Core.pages.get('singlePost').events.register('reGenerateReply_decideOutput', function(printFlag, i, item) {
+    if (Core.config['displaySetting'].onlyAfterBookMrak != 0 && i < Core.plugin['Bookmark'].bookMarkLocation)
+        printFlag = false;
+
+    var arr = [];
+    arr[0] = printFlag;
+    arr[1] = i;
+    arr[2] = item;
+    return arr;
+}, 20);
+
+Core.pages.get('singlePost').events.register('reGenerateReply_insertRender', function(replyId, singleReply, tempAllReply) {
     if (Core.config['bookMarkBtn']) {
         Core.plugin['Bookmark'].setBookMarkBtn("r-" + replyId);
     }
 });
 
-Core.pages.get('singleACMsg').events.register('reGenerateReply_AfterRender', function() {
+Core.pages.get('singlePost').events.register('reGenerateReply_AfterRender', function() {
     if (Core.config['bookMarkBtn']) {
         Core.plugin['Bookmark'].setAllBookMarkBtn();
     }
 });
 
-Core.pages.get('singleACMsg').events.register('reGenerateReply_post', function() {
+Core.pages.get('singlePost').events.register('reGenerateReply_post', function() {
     if (Core.config['bookmark-' + Core.config['MsgId']] !== undefined) {
         Core.plugin['Bookmark'].bookMarkChangeColor(Core.config['bookmark-' + Core.config['MsgId']]);
     }

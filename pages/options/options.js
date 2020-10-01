@@ -43,7 +43,7 @@ function save_options() {
         replyDivCutting: rc,
         bookMarkBtn: bmb,
         notifiSound: ns,
-        cuttMsgLimit: cml,
+        cuttMsgLimit: parseInt(cml) ,
         fastResponse1: fs1,
         fastResponse2: fs2,
         fastResponse3: fs3,
