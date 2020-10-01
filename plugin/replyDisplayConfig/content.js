@@ -3,12 +3,13 @@ Core.plugin['ReplyDisplayConfig'] = {};
 Core.plugin['ReplyDisplayConfig'].bookMarkLocation = -1;
 
 Core.plugin['ReplyDisplayConfig'].resetUserList = function(arr) {
+    console.log(arr)
     var userArr = new Array();
     var userNameArr = new Array();
     $.each(arr, function(i, item) {
-        if (userArr.indexOf(item.userID) == -1) {
-            userArr.push(item.userID);
-            userNameArr.push(item.user);
+        if (userArr.indexOf(item.userid) == -1) {
+            userArr.push(item.userid);
+            userNameArr.push(item.name);
         }
     });
 
@@ -81,9 +82,6 @@ Core.plugin['ReplyDisplayConfig'].addRightContent = function() {
     var rightContentUserDiv = document.createElement("div");
     rightContentUserDiv.id = 'baha-rightContentUserDiv';
 
-    var nowContentArr = Core.pages.get('singleACMsg').subFunt['generateReplyObjArr'](document.documentElement.innerHTML);
-    Core.config['lastReplyArr'] = nowContentArr;
-
     var rightContentBtn = document.createElement("button");
     rightContentBtn.innerHTML = '套用';
 
@@ -122,7 +120,7 @@ Core.plugin['ReplyDisplayConfig'].addRightContent = function() {
 
         Core.config['displaySetting'] = pageSetting;
 
-        Core.pages.get('singleACMsg').subFunt['reGenerateReply'](true, new Array(), new Array());
+        Core.pages.get('singlePost').subFunt['reGenerateReply'](true,[],[]);
     });
 
     rightContentBtnClean.addEventListener("click", function(e) {
@@ -144,12 +142,12 @@ Core.plugin['ReplyDisplayConfig'].addRightContent = function() {
     domRightContent.appendChild(domRightContentBtnDiv)
     $(document.getElementById('BH-slave')).prepend(domRightContent);
     $(document.getElementById('BH-slave')).prepend(domRightTitle);
-    Core.plugin['ReplyDisplayConfig'].resetUserList(nowContentArr);
+    Core.plugin['ReplyDisplayConfig'].resetUserList(Core.config['lastReplyArr']);
 }
 
-Core.pages.get('singleACMsg').events.register('common', Core.plugin['ReplyDisplayConfig'].addRightContent);
+Core.pages.get('singlePost').events.register('common', Core.plugin['ReplyDisplayConfig'].addRightContent);
 
-Core.pages.get('singleACMsg').events.register('reGenerateReply_pre', function() {
+Core.pages.get('singlePost').events.register('reGenerateReply_pre', function() {
     if (Core.config['bookmark-' + Core.config['MsgId']] !== undefined && Core.config['displaySetting'].onlyAfterBookMrak != 0) {
         for (var i = 0; i < Core.config['lastReplyArr'].length; i++) {
             if (('r-' + Core.config['lastReplyArr'][i].snID) === Core.config['bookmark-' + Core.config['MsgId']]) {
@@ -166,12 +164,12 @@ Core.pages.get('singleACMsg').events.register('reGenerateReply_pre', function() 
     });
 }, 10);
 
-Core.pages.get('singleACMsg').events.register('reGenerateReply_decideOutput', function(printFlag, i, item) {
+Core.pages.get('singlePost').events.register('reGenerateReply_decideOutput', function(printFlag, i, item) {
     if (i < Core.plugin['ReplyDisplayConfig'].bookMarkLocation)
         printFlag = false;
 
     if (printFlag && Core.config['displaySetting'].showType == 1)
-        if (Core.config['displaySetting'].showUser.indexOf(item.userID) == -1)
+        if (Core.config['displaySetting'].showUser.indexOf(item.userid) == -1)
             printFlag = false;
 
     var arr = [];

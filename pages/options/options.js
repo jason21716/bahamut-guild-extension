@@ -11,7 +11,7 @@ function save_options() {
     var tncn = document.getElementById('titleNumbersCheckNotice').checked;
     var tncs = document.getElementById('titleNumbersCheckSubscript').checked;
     var tncr = document.getElementById('titleNumbersCheckRecommend').checked;
-    var sar = document.getElementById('singleACMsgReverse').checked;
+    var sar = document.getElementById('singlePostReverse').checked;
     var rwc = document.getElementById('replyDivWordCount').checked;
     var rc = document.getElementById('replyDivCutting').checked;
     var bmb = document.getElementById('bookMarkBtn').checked;
@@ -38,7 +38,7 @@ function save_options() {
         titleNumbersCheckNotice: tncn,
         titleNumbersCheckSubscript: tncs,
         titleNumbersCheckRecommend: tncr,
-        singleACMsgReverse: sar,
+        singlePostReverse: sar,
         replyDivWordCount: rwc,
         replyDivCutting: rc,
         bookMarkBtn: bmb,
@@ -81,7 +81,7 @@ function restore_options() {
             titleNumbersCheckNotice: false,
             titleNumbersCheckSubscript: false,
             titleNumbersCheckRecommend: false,
-            singleACMsgReverse: false,
+            singlePostReverse: false,
             replyDivWordCount: false,
             replyDivCutting: false,
             uploadJsonKey: null,
@@ -106,7 +106,7 @@ function restore_options() {
             fastResponse8name: '回覆8'
         }, function(item) {
             changeCheckBoxState('titleNumbers', item['titleNumbers']);
-            changeCheckBoxState('singleACMsgReverse', item['singleACMsgReverse']);
+            changeCheckBoxState('singlePostReverse', item['singlePostReverse']);
             changeCheckBoxState('replyDivWordCount', item['replyDivWordCount']);
             changeCheckBoxState('replyDivCutting', item['replyDivCutting']);
             changeCheckBoxState('bookMarkBtn', item['bookMarkBtn']);

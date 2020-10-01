@@ -40,30 +40,31 @@ Core.pages.get('singlePost').subFunt['reGenerateReply'] = function(flag, replyAr
 
         if (printFlag) {
             replyArr.push(item);
-            replySnIdArr.push(item.snID);
+            replySnIdArr.push(item.id);
             try {
-                document.getElementById('baha-userList-' + item.userID).style.fontWeight = 'bold';
-                document.getElementById('baha-userList-' + item.userID).style.color = 'blue';
+                document.getElementById('baha-userList-' + item.userid).style.fontWeight = 'bold';
+                document.getElementById('baha-userList-' + item.userid).style.color = 'blue';
             } catch (e) {
                 Core.plugin['ReplyDisplayConfig'].resetUserList(Core.config['lastReplyArr']);
-                document.getElementById('baha-userList-' + item.userID).style.fontWeight = 'bold';
-                document.getElementById('baha-userList-' + item.userID).style.color = 'blue';
+                document.getElementById('baha-userList-' + item.userid).style.fontWeight = 'bold';
+                document.getElementById('baha-userList-' + item.userid).style.color = 'blue';
             }
 
         }
 
 
     });
-
+    console.log("reGenerateReply_decideOutput")
+    console.log(replyArr)
 
     if (flag) {
         var arr = [];
         arr[0] = replyArr;
         replyArr = Core.pages.get('singlePost').events.execArgs('reGenerateReply_beforeRender', arr)[0];
 
-        let htmlCode = commentListLayout(gsn, messageId, replyArr, 1);
-        jQuery(`#readMoreComments-${messageId}`).remove();
-        jQuery(`#allReply${messageId}`).html(htmlCode);
+        let htmlCode = commentListLayout(Core.config['guildId'], Core.config['MsgId'], replyArr, 1);
+        jQuery(`#readMoreComments-${Core.config['MsgId']}`).remove();
+        jQuery(`#allReply${Core.config['MsgId']}`).html(htmlCode);
 
         Core.pages.get('singlePost').events.exec('reGenerateReply_AfterRender');
 
@@ -79,18 +80,16 @@ Core.pages.get('singlePost').subFunt['reGenerateReply'] = function(flag, replyAr
             if ($("#r-" + replySnIdArr[i]).length == 0) {
 
                 var singleReply = buildReplyFix(replyArr[i].snID, replyArr[i].userID, replyArr[i].user, replyArr[i].content, replyArr[i].time, replyArr[i].isSelf, replyArr[i].msgID, replyArr[i].replyCount, '');
-
+                var singleReply = commentLayout(Core.config['MsgId'], replyArr[i].id, replyArr[i].text, i) 
                 var arr = [replySnIdArr[i], singleReply, tempAllReply];
 
-                if (Core.config['singleACMsgReverse']) {
+                if (Core.config['singlePostReverse']) {
                     tempAllReply.insertBefore(htmlToElement(singleReply), tempAllReply.firstChild);
                 } else {
                     tempAllReply.appendChild(htmlToElement(singleReply));
                 }
 
                 Core.pages.get('singlePost').events.execArgs('reGenerateReply_insertRender', arr);
-
-                Util.ChangeText("r-" + replySnIdArr[i], Util.ChangeText.FLAG_BALA);
             }
         }
 
@@ -115,7 +114,7 @@ Core.pages.get('singlePost').subFunt['reGenerateReply'] = function(flag, replyAr
 }
 
 Core.pages.get('singlePost').subFunt['generateReplyObjArr'] = function(gsn, messageId) {
-    jQuery.ajax({
+    $.ajax({
         url: globalConfig.apiRoot + '/v1/comment_list_legacy.php',
         method: 'GET',
         data: {
@@ -125,9 +124,8 @@ Core.pages.get('singlePost').subFunt['generateReplyObjArr'] = function(gsn, mess
         xhrFields: {
             withCredentials: true
         }
-    }).done(function(result) {
-        Core.config['lastReplyArr'] = result.data.comments
-    })
+   })
+   .done((res)=>{Core.config['lastReplyArr'] = res.data.comments})
 }
 
 Core.pages.get('singlePost').subFunt['commentNewFix'] = function(gsn, messageId) {
@@ -231,56 +229,92 @@ Core.pages.get('singlePost').subFunt['enterkeyFix'] = function(e, obj, type, sn,
 }
 
 Core.pages.get('singlePost').mainEvent = function() {
-    //抓取MsgId、guildId
-    var singleACMsgParme = null;
-    var regex = /\?sn=([^\/]*)\&gsn\=([^\/]*)/;
-    var match = Core.config['pageName'][1].match(regex);
-    if (typeof match != "undefined" && null != match) {
-        singleACMsgParme = new Array(match[1], match[2]);
-    }
-    var MsgId = singleACMsgParme[0];
-    var guildId = singleACMsgParme[1];
-    Core.config['MsgId'] = MsgId;
-    Core.config['guildId'] = guildId;
 
-    //確認是否為該串擁有者
-    var msgrightDOM = document.getElementsByClassName('msgright')[0];
-    var msgControllerDOM = msgrightDOM.getElementsByTagName('a')[0];
-    var isOwner;
-    if (msgControllerDOM.textContent == '刪除') {
-        isOwner = true;
+    new Promise((resolve, reject) => {
+        console.log('Initial');
+
+        //抓取MsgId、guildId
+        var singleACMsgParme = null;
+        var sn_regex = /[\?&]sn=(\d*)/;
+        var sn_match = Core.config['pageName'][1].match(sn_regex);
+        var gsn_regex = /[\?&]gsn=(\d*)/;
+        var gsn_match = Core.config['pageName'][1].match(gsn_regex);
+        if (typeof sn_match != "undefined" && null != sn_match && typeof gsn_match != "undefined" && null != gsn_match ) {
+            singleACMsgParme = new Array(sn_match[1], gsn_match[1]);
+        }
+        console.log(singleACMsgParme)
+        var MsgId = singleACMsgParme[0];
+        var guildId = singleACMsgParme[1];
+        Core.config['MsgId'] = MsgId;
+        Core.config['guildId'] = guildId;
+    
+        resolve();
+    }).then((resolve, reject) => {
+        //確認是否為該串擁有者
+        var msgrightDOM = document.getElementsByClassName('msgright')[0];
+        var msgControllerDOM = msgrightDOM.getElementsByTagName('a')[0];
+        var isOwner;
+        if (msgControllerDOM.textContent == '刪除') {
+            isOwner = true;
+            Core.config['isOwner'] = isOwner;
+        } else {
+            var msgControllerDOMMatch = msgControllerDOM.href.match(/https\:\/\/home\.gamer\.com\.tw\/home\.php\?owner\=([a-z A-Z 0-9]*)/);
+            var msgController = msgControllerDOMMatch[1];
+            isOwner = false;
+        }
         Core.config['isOwner'] = isOwner;
-    } else {
-        var msgControllerDOMMatch = msgControllerDOM.href.match(/https\:\/\/home\.gamer\.com\.tw\/home\.php\?owner\=([a-z A-Z 0-9]*)/);
-        var msgController = msgControllerDOMMatch[1];
-        isOwner = false;
-    }
-    Core.config['isOwner'] = isOwner;
+        Core.config['controller'] = msgController;
+        return Promise.resolve();
+    }).then((resolve, reject) => {
+        return $.ajax({
+            url: globalConfig.apiRoot + '/v1/comment_list_legacy.php',
+            method: 'GET',
+            data: {
+                gsn: Core.config['guildId'],
+                messageId: Core.config['MsgId'],
+            },
+            xhrFields: {
+                withCredentials: true
+            }
+       })
+    }).then((resolve, reject) => {
+        Core.config['lastReplyArr'] = resolve.data.comments
+        return Promise.resolve();
+    }).then((resolve, reject) => {
+        this.events.exec('common');
+        return Promise.resolve();
+    }).then((resolve, reject) => {
+        this.events.exec('before_rebuild');
+        return Promise.resolve();
+    }).then((resolve, reject) => {
+        //改寫送出按鍵與replyMsg中keypress事件，解決疊樓異常問題
+        var replyBtnDOM = document.createElement("button");
+        var MsgId = Core.config['MsgId']
+        replyBtnDOM.id = 'bahaext-replyBtn' + MsgId;
+        replyBtnDOM.innerHTML = '叭啦';
+        document.getElementById('replyDiv' + MsgId).removeChild(document.getElementById('replyBtn' + MsgId));
+        document.getElementById('replyDiv' + MsgId).appendChild(replyBtnDOM);
+        return Promise.resolve();
+    }).then((resolve, reject) => {
+        //重建replyMsg，清除先前的onkeypress事件
+        var MsgId = Core.config['MsgId']
+        document.getElementById('replyDiv' + MsgId).removeChild(document.getElementById('replyMsg' + MsgId));
+        var BH_replyDiv_DOM = document.createElement("textarea");
+        BH_replyDiv_DOM.id = 'replyMsg' + MsgId;
+        BH_replyDiv_DOM.setAttribute("rows", "1");
+        document.getElementById('replyDiv' + MsgId).insertBefore(BH_replyDiv_DOM, document.getElementById('emo' + MsgId));
+        return Promise.resolve();
+    }).then((resolve, reject) => {
+        var MsgId = Core.config['MsgId'];
+        var guildId = Core.config['guildId']
+        var funBtn = function(id, gid) { return function() { Core.pages.get('singlePost').subFunt['commentNewFix'](guildId, MsgId); }; };
+        var funMsg = function(e, obj) { return function() { Core.pages.get('singlePost').subFunt['enterkeyFix'](e, obj, 'reply', MsgId, Core.config['controller'], guildId); }; };
 
-    this.subFunt['generateReplyObjArr'](Core.config['guildId'], Core.config['MsgId']);
-
-    this.events.exec('common');
-
-    this.events.exec('before_rebuild');
-    //改寫送出按鍵與replyMsg中keypress事件，解決疊樓異常問題
-    var replyBtnDOM = document.createElement("button");
-    replyBtnDOM.id = 'bahaext-replyBtn' + MsgId;
-    replyBtnDOM.innerHTML = '叭啦';
-    document.getElementById('replyDiv' + MsgId).removeChild(document.getElementById('replyBtn' + MsgId));
-    document.getElementById('replyDiv' + MsgId).appendChild(replyBtnDOM);
-
-    //重建replyMsg，清除先前的onkeypress事件
-    document.getElementById('replyDiv' + MsgId).removeChild(document.getElementById('replyMsg' + MsgId));
-    var BH_replyDiv_DOM = document.createElement("textarea");
-    BH_replyDiv_DOM.id = 'replyMsg' + MsgId;
-    BH_replyDiv_DOM.setAttribute("rows", "1");
-    document.getElementById('replyDiv' + MsgId).insertBefore(BH_replyDiv_DOM, document.getElementById('emo' + MsgId));
-
-    var funBtn = function(id, gid) { return function() { Core.pages.get('singlePost').subFunt['commentNewFix'](guildId, MsgId); }; };
-    var funMsg = function(e, obj) { return function() { Core.pages.get('singlePost').subFunt['enterkeyFix'](e, obj, 'reply', MsgId, msgController, guildId); }; };
-
-    document.getElementById('bahaext-replyBtn' + MsgId).addEventListener("click", funBtn(MsgId, guildId));
-    document.getElementById('replyMsg' + MsgId).addEventListener("keypress", funMsg(event, document.getElementById('replyMsg' + MsgId)));
-
-    this.events.exec('after_rebuild');
+        document.getElementById('bahaext-replyBtn' + MsgId).addEventListener("click", funBtn(MsgId, guildId));
+        document.getElementById('replyMsg' + MsgId).addEventListener("keypress", funMsg(event, document.getElementById('replyMsg' + MsgId)));
+        return Promise.resolve();
+    }).then((resolve, reject) => {
+        this.events.exec('after_rebuild');
+        return Promise.resolve();
+    })
 }

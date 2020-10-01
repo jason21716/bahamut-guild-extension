@@ -6,7 +6,7 @@ Core.plugin['AutoRefresh'].panelset = function() {
         //增加定時更新設定欄
     var autoRefreshDivDom = document.createElement('div');
     autoRefreshDivDom.id = 'baha-autoRefreshDiv';
-    if (Core.config['singleACMsgReverse'] === true) {
+    if (Core.config['singlePostReverse'] === true) {
         document.getElementsByClassName('msgright')[0].insertBefore(autoRefreshDivDom, document.getElementById('allReply' + MsgId));
     } else {
         document.getElementsByClassName('msgright')[0].appendChild(autoRefreshDivDom);

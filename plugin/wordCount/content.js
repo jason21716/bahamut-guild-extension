@@ -7,7 +7,7 @@ Core.plugin['WordCount'].panelSet = function() {
         var wordCountDOM = document.createElement("span");
         wordCountDOM.id = 'bahaext-wordCount';
         wordCountDOM.style.color = 'red';
-        if (Core.config['singleACMsgReverse'] === true)
+        if (Core.config['singlePostReverse'] === true)
             document.getElementsByClassName('msgitembar')[0].appendChild(wordCountDOM);
         else
             document.getElementById('replyDiv' + MsgId).appendChild(wordCountDOM);

@@ -51,7 +51,11 @@
             "core/pages/singlePost_rewriteFunt.js",
             "core/pages/singlePost.js",
 
-
+            "plugin/titleDisplay/content.js",
+            "plugin/replyDisplayConfig/content.js",
+            "plugin/timer/content.js",
+            "plugin/reverseMsg/content.js",
+            "plugin/cuttingMsg/content.js",
 
             "core/content_script.js"
         ]

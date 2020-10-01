@@ -24,15 +24,15 @@ Core.plugin['ReverseMsg'].copyReply = function(id) {
     return replyArr;
 }
 
-Core.pages.get('singleACMsg').events.register('before_rebuild', function() {
-    if (Core.config['singleACMsgReverse'] === true) {
+Core.pages.get('singlePost').events.register('before_rebuild', function() {
+    if (Core.config['singlePostReverse'] === true) {
         var replyArr = Core.plugin['ReverseMsg'].copyReply(Core.config['MsgId']);
         Core.plugin['ReverseMsg'].reverseReply(replyArr, Core.config['MsgId']);
     }
 }, 10);
 
-Core.pages.get('singleACMsg').events.register('reGenerateReply_beforeRender', function(replyArr) {
-    if (Core.config['singleACMsgReverse']) {
+Core.pages.get('singlePost').events.register('reGenerateReply_beforeRender', function(replyArr) {
+    if (Core.config['singlePostReverse']) {
         replyArr.reverse();
     }
 

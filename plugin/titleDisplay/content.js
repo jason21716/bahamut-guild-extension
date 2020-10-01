@@ -59,5 +59,5 @@ Core.events.register('before_page_action', function() {
     }
 });
 
-Core.pages.get('singleACMsg').events.register('common', Core.plugin['TitleDisplay'].addBtnEditTitle);
+Core.pages.get('singlePost').events.register('common', Core.plugin['TitleDisplay'].addBtnEditTitle);
 Core.pages.get('guild').events.register('common', Core.plugin['TitleDisplay'].addBtnEditTitle);

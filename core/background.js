@@ -12,8 +12,14 @@
  */
 function checkForValidUrl(tabId, changeInfo, tab) {
     var urls = getDomainFromUrl(tab.url);
+    console.log(urls)
+    if(urls == null){
+        return
+    }
     if (urls[0].toLowerCase() == "guild.gamer.com.tw") {
         chrome.pageAction.show(tabId);
+    }else{
+        chrome.pageAction.hide(tabId);
     }
 };
 
