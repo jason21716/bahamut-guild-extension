@@ -56,6 +56,8 @@
             "plugin/timer/content.js",
             "plugin/reverseMsg/content.js",
             "plugin/cuttingMsg/content.js",
+            "plugin/keepMessage/content.js",
+            "plugin/fastResponse/content.js",
 
             "core/content_script.js"
         ]

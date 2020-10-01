@@ -1,3 +1,17 @@
+function utf8LengthFix(txt) {
+    var value = txt;
+
+    value = value.replace(/&/g, "&amp;");
+    value = value.replace(/'/g, "&#039;");
+    value = value.replace(/"/g, "&quot;");
+    value = value.replace(/</g, "&lt;");
+    value = value.replace(/>/g, "&gt;");
+    value = value.replace(/\r/g, "");
+    value = value.replace(/\n/g, "<br />");
+
+    return value.utf8Length();
+}
+
 String.prototype.utf8Length = function() {
     var e = this.match(/[^\x00-\xff]/gi);
     return null === e ? this.length : this.length + 2 * e.length

@@ -142,8 +142,8 @@ Core.pages.get('singlePost').subFunt['commentNewFix'] = function(gsn, messageId)
         return;
     }
 
-    var msg_arr = [];
-    msg_arr[0] = content;
+    var msg_arr = []
+    msg_arr[0] = content
 
     msg_arr = Core.pages.get('singlePost').events.execArgs('cuttingReply_pre', msg_arr);
     var checkStr = msg_arr[0];
@@ -202,7 +202,7 @@ Core.pages.get('singlePost').subFunt['UploadReplyRecursive'] = function(gsn, mes
             name: Cookies.get('BAHANICK')
         };
 
-        commentNewUpdateLayout(gsn, messageId, commentData);
+        Core.pages.get('singlePost').subFunt['commentNewUpdateLayoutFix'] (gsn, messageId, commentData);
 
         if (msgarr.length > 1) {
             Core.pages.get('singlePost').subFunt['UploadReplyRecursive'](gsn, messageId, msgarr, index + 1)
@@ -226,6 +226,29 @@ Core.pages.get('singlePost').subFunt['enterkeyFix'] = function(e, obj, type, sn,
             obj.style.height = obj.scrollHeight + 'px';
         }
     }
+}
+
+Core.pages.get('singlePost').subFunt['commentNewUpdateLayoutFix'] = function(gsn, messageId, comment) {
+    let div = jQuery('#allReply' + messageId);
+    let locate = null
+    if (Core.config['singlePostReverse']){
+        locate = div.find('.msgreport:first');
+    }else{
+        locate = div.find('.msgreport:last');
+    }
+    let num = 1;
+    if (locate.length > 0) {
+        num = locate.find('.ST1:last').text().substring(1);
+        num = parseInt(num, 10) + 1;
+    }
+
+    if (Core.config['singlePostReverse']){
+        div.prepend(commentLayout(gsn, messageId, comment, num));
+    }else{
+        div.append(commentLayout(gsn, messageId, comment, num));
+    }
+    
+    
 }
 
 Core.pages.get('singlePost').mainEvent = function() {

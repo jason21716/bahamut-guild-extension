@@ -12,7 +12,8 @@ Core.plugin['CuttingMsg'].countLimitFixOnlyNum = function(a) {
     return utf8LengthFix(c);
 }
 
-Core.plugin['CuttingMsg'].cuttingMsg = function(str, length) {
+Core.plugin['CuttingMsg'].cuttingMsg = function(str) {
+    var length = Core.config['cuttMsgLimit'];
     var targetLength = length * 3;
     var strArr = str.match(/[^\r\n]{0,}[\r\n]{0,}/gm);
 
@@ -52,3 +53,5 @@ Core.plugin['CuttingMsg'].cuttingMsg = function(str, length) {
     });
     return resultArr;
 }
+
+Core.pages.get('singlePost').events.register('checkReplyFix', Core.plugin['CuttingMsg'].cuttingMsg);

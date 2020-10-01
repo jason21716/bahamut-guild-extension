@@ -53,4 +53,4 @@ Core.plugin['FastResponse'].fastResponseFunt = function(snid, text) {
     document.getElementById('replyMsg' + snid).focus();
 }
 
-Core.pages.get('singleACMsg').events.register('common', Core.plugin['FastResponse'].panelSetting);
+Core.pages.get('singlePost').events.register('common', Core.plugin['FastResponse'].panelSetting);

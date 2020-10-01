@@ -54,11 +54,8 @@
             TitleDisplay(NL):新增修改網頁標題按鈕與觸發事件
     
 
-"plugin/cuttingMsg/content.js",
-"plugin/fastResponse/content.js",
 "plugin/wordCount/content.js",
 "plugin/autoRefresh/content.js",
 "plugin/dice/content.js",
 "plugin/bookmark/content.js",
 "plugin/highSpeed/content.js",
-"plugin/keepMessage/content.js",

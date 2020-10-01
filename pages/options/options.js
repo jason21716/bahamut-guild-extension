@@ -16,7 +16,7 @@ function save_options() {
     var rc = document.getElementById('replyDivCutting').checked;
     var bmb = document.getElementById('bookMarkBtn').checked;
     var ns = document.getElementById('notifiSound').checked;
-    var jsk = document.getElementById('uploadJsonKey').value;
+    var cml = document.getElementById('cuttMsgLimit').value;
     var fs1 = document.getElementById('fastResponse1').value;
     var fs2 = document.getElementById('fastResponse2').value;
     var fs3 = document.getElementById('fastResponse3').value;
@@ -43,7 +43,7 @@ function save_options() {
         replyDivCutting: rc,
         bookMarkBtn: bmb,
         notifiSound: ns,
-        uploadJsonKey: jsk,
+        cuttMsgLimit: cml,
         fastResponse1: fs1,
         fastResponse2: fs2,
         fastResponse3: fs3,
@@ -84,7 +84,7 @@ function restore_options() {
             singlePostReverse: false,
             replyDivWordCount: false,
             replyDivCutting: false,
-            uploadJsonKey: null,
+            cuttMsgLimit: null,
             bookMarkBtn: false,
             notifiSound: false,
             bookMarkIndex: new Array(),
@@ -114,7 +114,7 @@ function restore_options() {
             changeCheckBoxState('titleNumbersCheckNotice', item['titleNumbersCheckNotice']);
             changeCheckBoxState('titleNumbersCheckSubscript', item['titleNumbersCheckSubscript']);
             changeCheckBoxState('titleNumbersCheckRecommend', item['titleNumbersCheckRecommend']);
-            changeInputState('uploadJsonKey', item['uploadJsonKey']);
+            changeInputState('cuttMsgLimit', item['cuttMsgLimit']);
             changeInputState('fastResponse1', item['fastResponse1']);
             changeInputState('fastResponse2', item['fastResponse2']);
             changeInputState('fastResponse3', item['fastResponse3']);

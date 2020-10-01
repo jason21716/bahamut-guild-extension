@@ -17,18 +17,6 @@ function countLimit(txt, limit) {
     return false;
 }
 
-function commentNewUpdateLayout(gsn, messageId, comment) {
-    let div = jQuery('#allReply' + messageId);
-    let last = div.find('.msgreport:last');
-    let num = 1;
-    if (last.length > 0) {
-        num = last.find('.ST1:last').text().substring(1);
-        num = parseInt(num, 10) + 1;
-    }
-
-    div.append(commentLayout(gsn, messageId, comment, num));
-}
-
 function commentListLayout(gsn, messageId, comments, page) {
     let htmlCode = '';
     let commentNum = (page - 1) * 15 + 1;
