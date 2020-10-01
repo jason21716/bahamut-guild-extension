@@ -122,6 +122,7 @@ Core.plugin['AutoRefresh'].autoRefreshFunt = function() {
         if (document.getElementById('baha-autoRefreshCheck').checked) {
             var last_check = 0;
             last_check = document.getElementById('allReply' + Core.config['MsgId']).childElementCount;
+            lastResponseUserId = Core.config['lastReplyArr'][Core.config['lastReplyArr'].length-1].userid;
             if (MSGRE_MAX < last_check && lastResponseUserId != Core.config['controller']) {
                 var text = (Core.config['NEW_TITLE'] != Core.config['ORGINAL_TITLE']) ?
                     '分頁：' + Core.config['NEW_TITLE'] :

@@ -3,7 +3,9 @@ Core.plugin['HighSpeed'].flag = false;
 
 Core.plugin['HighSpeed'].changeTime = function(str) {
     var calender = new Date();
-    if (str.indexOf("昨天") !== -1) {
+    if (str.indexOf("0 分鐘") !== -1){
+        str = calender.format("yyyy-mm-dd HH:MM");
+    }else if (str.indexOf("昨天") !== -1) {
         calender.setDate(calender.getDate() - 1);
         str = str.replace("昨天", calender.format("yyyy-mm-dd"));
     } else if (str.indexOf("前天") !== -1) {
@@ -13,7 +15,7 @@ Core.plugin['HighSpeed'].changeTime = function(str) {
         var matchs = str.match(/([0-9]+)\W?分前/);
         calender.setMinutes(calender.getMinutes() - matchs[1]);
         str = calender.format("yyyy-mm-dd HH:MM");
-    } else if (str.indexOf("1分內") !== -1) {
+    } else if (str.indexOf("1 分內") !== -1) {
         str = calender.format("yyyy-mm-dd HH:MM");
     } else if (str.indexOf("小時前") !== -1) {
         var matchs = str.match(/([0-9]+)\W?小時前/);
