@@ -54,4 +54,4 @@ Core.plugin['CuttingMsg'].cuttingMsg = function(str) {
     return resultArr;
 }
 
-Core.pages.get('singlePost').events.register('checkReplyFix', Core.plugin['CuttingMsg'].cuttingMsg);
+Core.pages.get('singlePost').events.register('cuttingReply', Core.plugin['CuttingMsg'].cuttingMsg);
